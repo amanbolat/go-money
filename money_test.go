@@ -363,7 +363,7 @@ func TestMoney_Divide(t *testing.T) {
 
 	for _, tc := range tcs {
 		m := money.New(tc.amount, "EUR")
-		r := m.Divide(tc.divisor).Round().Amount()
+		r := m.Divide(tc.divisor).Round(int32(m.Currency().Fraction)).Amount()
 
 		assert.Truef(t, r.Equal(decimal.New(tc.expected, -int32(m.Currency().Fraction))), "Expected %d / %d = %d got %s", tc.amount, tc.divisor, tc.expected, r.String())
 	}
@@ -372,20 +372,21 @@ func TestMoney_Divide(t *testing.T) {
 func TestMoney_Round(t *testing.T) {
 	tcs := []struct {
 		amount   int64
+		scale    int32
 		expected int64
 	}{
-		{125, 100},
-		{175, 200},
-		{349, 300},
-		{351, 400},
-		{0, 0},
-		{-1, 0},
-		{-75, -100},
+		{125, 0, 100},
+		{175, 0, 200},
+		{349, 0, 300},
+		{351, 0, 400},
+		{0, 0, 0},
+		{-1, 0, 0},
+		{-75, 0, -100},
 	}
 
 	for _, tc := range tcs {
 		m := money.New(tc.amount, "EUR")
-		r := m.Round().Amount()
+		r := m.Round(tc.scale).Amount()
 
 		assert.Truef(t, r.Equal(decimal.New(tc.expected, -int32(m.Currency().Fraction))), "Expected rounded %d to be %d got %s", tc.amount, tc.expected, r.String())
 	}
@@ -409,10 +410,6 @@ func TestMoney_Split(t *testing.T) {
 
 		for _, party := range split {
 			rs = append(rs, party.Amount())
-		}
-
-		for _, e := range split {
-			t.Log(e.Amount())
 		}
 
 		for i, actual := range rs {
@@ -487,13 +484,9 @@ func TestMoney_Chain(t *testing.T) {
 	m = m.Divide(5).Multiply(4)
 	m, err = m.Subtract(om)
 
-	if err != nil {
-		t.Error(err)
-	}
 
-	if !m.Amount().Equal(decimal.NewFromFloat(7)) {
-		t.Errorf("Expected %d got %d", e, m.Amount())
-	}
+	assert.NoError(t, err)
+	assert.Truef(t, m.Amount().Equal(decimal.New(7, -int32(m.Currency().Fraction))), "Expected %d got %s", e, m.Amount().String())
 }
 
 func TestMoney_Format(t *testing.T) {

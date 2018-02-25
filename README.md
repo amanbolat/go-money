@@ -15,7 +15,7 @@ You shouldn't use float for monetary values, since they always carry small round
 ```go
 package main
 
-import "github.com/rhymond/go-money"
+import "github.com/amanbolat/go-money"
 
 func main() {
     pound := money.New(100, "GBP")

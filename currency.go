@@ -169,18 +169,6 @@ func GetCurrency(code string) *Currency {
 	return currencies[code]
 }
 
-// Formatter returns currency formatter representing
-// used currency structure
-func (c *Currency) Formatter() *Formatter {
-	return &Formatter{
-		Fraction: c.Fraction,
-		Decimal:  c.Decimal,
-		Thousand: c.Thousand,
-		Grapheme: c.Grapheme,
-		Template: c.Template,
-	}
-}
-
 // getDefault represent default currency if currency is not found in currencies list.
 // Grapheme and Code fields will be changed by currency code
 func (c *Currency) getDefault() *Currency {

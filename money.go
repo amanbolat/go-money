@@ -6,11 +6,6 @@ import (
 	"strings"
 )
 
-// Amount is a datastructure that stores the amount being used for calculations
-type Amount struct {
-	val int64
-}
-
 // Money represents monetary value information, stores
 // currency and amount value
 type Money struct {
@@ -19,6 +14,8 @@ type Money struct {
 }
 
 // New creates and returns new instance of Money
+// amount should be in cents for currency
+// Example: New(100, "EUR") = 1 EUR
 func New(amount int64, code string) *Money {
 	c := newCurrency(code).get()
 	return &Money{
@@ -117,6 +114,9 @@ func (m *Money) Absolute() *Money {
 
 // Negative returns new Money struct from given Money using negative monetary value
 func (m *Money) Negative() *Money {
+	if m.IsNegative() {
+		return &Money{amount: m.amount, currency: m.currency}
+	}
 	return &Money{amount: m.amount.Neg(), currency: m.currency}
 }
 
@@ -149,9 +149,9 @@ func (m *Money) Divide(div int64) *Money {
 }
 
 // Round returns new Money struct with value rounded to nearest zero
-func (m *Money) Round() *Money {
-	c := m.currency.get()
-	return &Money{amount: m.amount.Round(int32(c.Fraction)), currency: m.currency}
+func (m *Money) Round(scale int32) *Money {
+	//return &Money{amount: m.amount.Round(int32(c.Fraction)), currency: m.currency}
+	return &Money{amount:m.amount.Round(scale), currency: m.currency}
 }
 
 // Split returns slice of Money structs with split Self value in given number.
