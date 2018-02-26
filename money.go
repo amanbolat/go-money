@@ -24,6 +24,16 @@ func New(amount int64, code string) *Money {
 	}
 }
 
+// NewFromDecimal creates Money instance from decimal.Decimal
+// and rounds it by currency Fraction
+func NewFromDecimal(amount decimal.Decimal, code string) *Money {
+	c := newCurrency(code).get()
+	return &Money{
+		amount:   amount.Round(int32(c.Fraction)),
+		currency: c,
+	}
+}
+
 // Currency returns the currency used by Money
 func (m *Money) Currency() *Currency {
 	return m.currency
