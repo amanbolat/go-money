@@ -6,12 +6,12 @@ import (
 
 // Currency represents money currency information required for formatting
 type Currency struct {
-	Code     string
-	Fraction int
-	Grapheme string
-	Template string
-	Decimal  string
-	Thousand string
+	Code     string `json:"code"`
+	Fraction int `json:"fraction"`
+	Grapheme string `json:"grapheme"`
+	Template string `json:"template"`
+	Decimal  string	`json:"decimal"`
+	Thousand string `json:"thousand"`
 }
 
 // currencies represents a collection of currency

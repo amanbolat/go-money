@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/shopspring/decimal"
 	"strings"
+	"encoding/json"
 )
 
 // Money represents monetary value information, stores
@@ -12,6 +13,37 @@ type Money struct {
 	amount   decimal.Decimal
 	currency *Currency
 }
+
+func (m *Money) UnmarshalJSON(data []byte) error {
+	s := &struct {
+		Amount decimal.Decimal `json:"amount"`
+		Currency string `json:"currency"`
+	}{}
+	err := json.Unmarshal(data, s)
+	if err != nil {
+		return err
+	}
+
+	val :=  NewFromDecimal(s.Amount, s.Currency)
+	m.currency = val.currency
+	m.amount = val.amount
+
+	return nil
+}
+
+func (m *Money) MarshalJSON() ([]byte, error) {
+	s := &struct {
+		Amount decimal.Decimal `json:"amount"`
+		Currency string `json:"currency"`
+	}{
+		Amount: m.amount,
+		Currency: m.currency.get().Code,
+	}
+
+	return json.Marshal(s)
+}
+
+
 
 // New creates and returns new instance of Money
 // amount should be in cents for currency

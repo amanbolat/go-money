@@ -5,6 +5,7 @@ import (
 	"github.com/shopspring/decimal"
 	"github.com/amanbolat/go-money"
 	"github.com/stretchr/testify/assert"
+	"encoding/json"
 )
 
 func TestNew(t *testing.T) {
@@ -600,4 +601,20 @@ func TestMoney_Amount(t *testing.T) {
 	if !pound.Amount().Equal(decimal.New(100, -int32(pound.Currency().Fraction))) {
 		t.Errorf("Expected %d got %d", 100, pound.Amount())
 	}
+}
+
+func TestMoney_MarshalJSON(t *testing.T) {
+	usd := money.New(125, "USD")
+	b, err := usd.MarshalJSON()
+	assert.NoError(t, err)
+	t.Log(string(b))
+}
+
+func TestMoney_UnmarshalJSON(t *testing.T) {
+	jsonB := []byte(`{"amount":"125.22","currency":"usd"}`)
+	m := &money.Money{}
+	err := json.Unmarshal(jsonB, m)
+	assert.NoError(t, err)
+	assert.Equal(t, "125.22", m.Amount().String())
+	assert.Equal(t, "USD", m.Currency().Code)
 }
