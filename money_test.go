@@ -605,10 +605,17 @@ func TestMoney_Amount(t *testing.T) {
 
 func TestMoney_MarshalJSON(t *testing.T) {
 	usd := money.New(125, "USD")
-	b, err := usd.MarshalJSON()
+	_, err := usd.MarshalJSON()
 	assert.NoError(t, err)
-	t.Log(string(b))
 }
+
+func TestMoney_MarshalJSON2(t *testing.T) {
+	usd := money.Money{}
+	_, err := usd.MarshalJSON()
+	assert.NoError(t, err)
+}
+
+
 
 func TestMoney_UnmarshalJSON(t *testing.T) {
 	jsonB := []byte(`{"amount":"125.22","currency":"usd"}`)

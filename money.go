@@ -25,19 +25,22 @@ func (m *Money) UnmarshalJSON(data []byte) error {
 	}
 
 	val :=  NewFromDecimal(s.Amount, s.Currency)
-	m.currency = val.currency
-	m.amount = val.amount
+	*m = *val
 
 	return nil
 }
 
 func (m *Money) MarshalJSON() ([]byte, error) {
+	var currency string
+	if m.currency != nil {
+		currency = m.Currency().Code
+	}
 	s := &struct {
 		Amount decimal.Decimal `json:"amount"`
 		Currency string `json:"currency"`
 	}{
 		Amount: m.amount,
-		Currency: m.currency.get().Code,
+		Currency: currency,
 	}
 
 	return json.Marshal(s)
