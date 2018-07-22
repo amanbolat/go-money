@@ -30,7 +30,7 @@ func (m *Money) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func (m *Money) MarshalJSON() ([]byte, error) {
+func (m Money) MarshalJSON() ([]byte, error) {
 	var currency string
 	if m.currency != nil {
 		currency = m.Currency().Code
